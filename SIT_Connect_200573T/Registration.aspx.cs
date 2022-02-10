@@ -37,19 +37,19 @@ namespace SIT_Connect_200573T
             switch (scores)
             {
                 case 1:
-                    status = "Very Weak";
+                    status = "Password needs to be at least 12 characters long";
                     break;
                 case 2:
-                    status = "Weak";
+                    status = "Password lacks a upper case character,digit and a special character ";
                     break;
                 case 3:
-                    status = "Medium";
+                    status = "Password lacks a digit and a special character";
                     break;
                 case 4:
-                    status = "Strong";
+                    status = "Password lacks a special character";
                     break;
                 case 5:
-                    status = "Very strong";
+                    status = "Password consists of a combination of digits,upper case,lower case characters and a special character and is 12 characters long";
                     break;
                 default:
                     break;
@@ -132,7 +132,7 @@ namespace SIT_Connect_200573T
                 using (SqlConnection con = new SqlConnection(MYDBConnectionString))
                 {
                     using (SqlCommand cmd = new SqlCommand("INSERT INTO Account VALUES(@FirstName,@LastName,@CreditNumber," +
-                        "@CreditDate,@CreditCVV,@Email,@DateOfBirth,@PasswordHash,@PasswordSalt,@Photos,@IV,@Key,@isLock)"))
+                        "@CreditDate,@CreditCVV,@Email,@DateOfBirth,@PasswordHash,@PasswordSalt,@Photos,@IV,@Key,@VerificationCode)"))
                 {
                         using (SqlDataAdapter sda = new SqlDataAdapter())
                         {
@@ -149,7 +149,7 @@ namespace SIT_Connect_200573T
                             cmd.Parameters.AddWithValue("@Photos", tb_photo.Text.Trim());
                             cmd.Parameters.AddWithValue("@IV", Convert.ToBase64String(IV));
                             cmd.Parameters.AddWithValue("@Key", Convert.ToBase64String(Key));
-                            cmd.Parameters.AddWithValue("@isLock", Convert.ToBase64String(Key));
+                            cmd.Parameters.AddWithValue("@VerificationCode", Convert.ToBase64String(Key));
 
 
 

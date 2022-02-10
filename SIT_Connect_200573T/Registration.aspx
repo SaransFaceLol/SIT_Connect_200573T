@@ -67,6 +67,7 @@
         <br />
         Credit Number&nbsp;&nbsp;
         <asp:TextBox ID="tb_creditnumber" runat="server" Width="223px"></asp:TextBox>
+        
         <br />
         <br />
         Credit Date&nbsp;&nbsp;
@@ -75,6 +76,7 @@
         <br />
         Credit CVV&nbsp;&nbsp;
         <asp:TextBox ID="tb_creditcvv" runat="server" Width="223px"></asp:TextBox>
+      
         <br />
         <br />
         Email&nbsp;&nbsp;
@@ -82,7 +84,7 @@
         <br />
         <br />
         Password&nbsp;&nbsp;
-        <asp:TextBox ID="tb_password" runat="server" Width="223px" TextMode="Password"></asp:TextBox>
+        <asp:TextBox ID="tb_password" runat="server" Width="223px" TextMode="Password" OnKeyUp="validate()"></asp:TextBox>
         <asp:Label ID="lbl_pwdchecker" runat="server" Text="pwdchecker"></asp:Label>
         <br />
         <br />

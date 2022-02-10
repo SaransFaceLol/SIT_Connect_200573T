@@ -29,7 +29,7 @@
     <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response"/>
 
 
-    <asp:Label ID="lblMessage" runat="server" EnableViewState="False">Error message here (lblMessage)</asp:Label>
+    <asp:Label ID="lblMessage" runat="server" EnableViewState="False" Text="Error message here (lblMessage)"> </asp:Label>
     </p>
     </fieldset>
 

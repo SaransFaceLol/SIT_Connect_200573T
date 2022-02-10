@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Data.SqlClient;
 using System.Data;
+using System.Net.Mail;
 
 namespace SIT_Connect_200573T
 {
@@ -20,6 +21,8 @@ namespace SIT_Connect_200573T
         string MYDBConnectionString =
        System.Configuration.ConfigurationManager.ConnectionStrings["MyDBConnection"].ConnectionString;
         public string action = null;
+        static string randomotp;
+        
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -48,24 +51,30 @@ namespace SIT_Connect_200573T
                         if (userHash.Equals(dbHash))
                         {
                             Session["LoggedIn"] = tb_userid.Text;
+                            string guid = Guid.NewGuid().ToString();
+                            Session["AuthToken"] = guid;
+                            Response.Cookies.Add(new HttpCookie("AuthToken", guid));
                             Response.Redirect("HomePage.aspx", false);
-                            action = "Successfully logged in!";
-                            createLog();
+
+                            Random random = new Random();
+                            randomotp = random.Next(000000, 999999).ToString();
+                            OTPgenerator(userid, randomotp);
+                            SendVerificationCode(randomotp);
+                            Response.Redirect("Verification.aspx", false);
+
+
+
 
 
                     }
-                        else
+                    else
                         {
                             lblMessage.Text = "Email or password is invalid. Please try again";
                             Response.Redirect("Login.aspx", false);
                             action = "Failed to log in";
-                            createLog();
+                            
                         }
 
-                        string guid = Guid.NewGuid().ToString();
-                        Session["AuthToken"] = guid;
-                        Response.Cookies.Add(new HttpCookie("AuthToken", guid));
-                        Response.Redirect("HomePage.aspx", false);
                         
 
                 }
@@ -119,7 +128,7 @@ namespace SIT_Connect_200573T
         {
             string s = null;
             SqlConnection connection = new SqlConnection(MYDBConnectionString);
-            string sql = "select PASSWORDSALT FROM ACCOUNT WHERE Email=@USERID";
+            string sql = "select PasswordSalt FROM ACCOUNT WHERE Email=@USERID";
             SqlCommand command = new SqlCommand(sql, connection);
             command.Parameters.AddWithValue("@USERID", userid);
             try
@@ -129,11 +138,11 @@ namespace SIT_Connect_200573T
                 {
                     while (reader.Read())
                     {
-                        if (reader["PASSWORDSALT"] != null)
+                        if (reader["PasswordSalt"] != null)
                         {
-                            if (reader["PASSWORDSALT"] != DBNull.Value)
+                            if (reader["PasswordSalt"] != DBNull.Value)
                             {
-                                s = reader["PASSWORDSALT"].ToString();
+                                s = reader["PasswordSalt"].ToString();
                             }
                         }
                     }
@@ -181,62 +190,27 @@ namespace SIT_Connect_200573T
                 throw ex;
             }
 
+        }
 
-        }
-        private bool islock(string userid)
+        protected string OTPgenerator(string userid, string randomNumber)
         {
-            var flag = false;
-            using (SqlConnection connection = new SqlConnection(MYDBConnectionString))
-            {
-                string sql = "select IsLock FROM Account WHERE Email = @USERID";
-                SqlCommand command = new SqlCommand(sql, connection);
-                command.Parameters.AddWithValue("@USERID", userid);
-                try
-                {
-                    connection.Open();
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            if (reader["IsLock"] != null)
-                            {
-                                if (reader["IsLock"] != DBNull.Value)
-                                {
-                                    flag = Convert.ToBoolean(reader["IsLock"].ToString());
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.ToString());
-                }
-                finally
-                {
-                    connection.Close();
-                }
-                return flag;
-            }
-        }
-        protected void createLog()
-        {
+            string verificationcode = null;
+            SqlConnection con = new SqlConnection(MYDBConnectionString);
+            string sql = "UPDATE ACCOUNT SET VerificationCode = @VerificationCode WHERE EMAIL = @USERID";
+            SqlCommand cmd = new SqlCommand(sql, con);
+            cmd.Parameters.AddWithValue("@VerificationCode", randomNumber);
+            cmd.Parameters.AddWithValue("@USERID", userid);
+
             try
             {
-                using (SqlConnection con = new SqlConnection(MYDBConnectionString))
+                con.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
                 {
-                    using (SqlCommand cmd = new SqlCommand("INSERT INTO Log VALUES (@Log, @userLog, @LogTime)"))
+                    while (reader.Read())
                     {
-                        using (SqlDataAdapter sda = new SqlDataAdapter())
+                        if (reader["VerificationCode"] != null)
                         {
-                            cmd.CommandType = CommandType.Text;
-                            cmd.Parameters.AddWithValue("@Log", action);  
-                            cmd.Parameters.AddWithValue("@userLog", tb_userid.Text.Trim());
-                            cmd.Parameters.AddWithValue("@LogTime", DateTime.Now);
-                            cmd.Connection = con;
-                            con.Open();
-                            cmd.ExecuteNonQuery();
-                            con.Close();
+                            verificationcode = reader["VerificationCode"].ToString();
                         }
                     }
                 }
@@ -245,7 +219,37 @@ namespace SIT_Connect_200573T
             {
                 throw new Exception(ex.ToString());
             }
+            finally { con.Close(); }
+            return verificationcode;
         }
+        protected string SendVerificationCode(string verificationcode)
+        {
+            string address = "SITConnect <nypasassignment@gmail.com>";
+            string str = null;
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential("nypasassignment@gmail.com", "MYDBCONNECTION"),
+                EnableSsl = true
+            };
+            var message = new MailMessage
+            {
+                Subject = "Application Security Verification Code",
+                Body = "Your verification is " + verificationcode + "\n Please input this to login."
+            };
+            message.To.Add(tb_userid.Text.ToString());
+            message.From = new MailAddress(address);
+            try
+            {
+                smtpClient.Send(message);
+                return str;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
     }
 
 }
