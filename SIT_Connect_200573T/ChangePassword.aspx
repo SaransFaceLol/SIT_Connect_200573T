@@ -11,7 +11,7 @@
             <div class="topnav">
 <a href="HomePage.aspx">Home</a>
 <a href="ChangePassword.aspx"class="active" >Change Password</a>
-  <a href="#contact">Contact</a>
+ 
 </div>
 
          <script type="text/javascript">

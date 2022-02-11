@@ -14,8 +14,7 @@
         <div class="topnav">
     <a href="Registration.aspx">Registration</a>
     <a href="Login.aspx" class="active" >Login</a>
-  <a href="#contact">Contact</a>
-  <a href="#about">About</a>
+
 </div>
 
     <fieldset>
@@ -29,7 +28,7 @@
     <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response"/>
 
 
-    <asp:Label ID="lblMessage" runat="server" EnableViewState="False" Text="Error message here (lblMessage)"> </asp:Label>
+    <asp:Label ID="lblMessage" runat="server" EnableViewState="False" > </asp:Label>
     </p>
     </fieldset>
 

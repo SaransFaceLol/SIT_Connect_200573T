@@ -46,7 +46,7 @@ namespace SIT_Connect_200573T
                     status = "Password lacks a digit and a special character";
                     break;
                 case 4:
-                    status = "Password lacks a special character";
+                    status = "Password lacks an upper case character";
                     break;
                 case 5:
                     status = "Password consists of a combination of digits,upper case,lower case characters and a special character and is 12 characters long";
@@ -146,7 +146,7 @@ namespace SIT_Connect_200573T
                             cmd.Parameters.AddWithValue("@DateOfBirth", tb_dateofbirth.Text.Trim());
                             cmd.Parameters.AddWithValue("@PasswordHash", finalHash);
                             cmd.Parameters.AddWithValue("@PasswordSalt", salt);
-                            cmd.Parameters.AddWithValue("@Photos", tb_photo.Text.Trim());
+                            cmd.Parameters.AddWithValue("@Photos", HttpUtility.HtmlEncode(tb_photo.Text.Trim()));
                             cmd.Parameters.AddWithValue("@IV", Convert.ToBase64String(IV));
                             cmd.Parameters.AddWithValue("@Key", Convert.ToBase64String(Key));
                             cmd.Parameters.AddWithValue("@VerificationCode", Convert.ToBase64String(Key));

@@ -10,8 +10,7 @@
 
 <a href="Registration.aspx" class="active">Registration</a>
   <a href="Login.aspx">Login</a>
-  <a href="#contact">Contact</a>
-  <a href="#about">About</a>
+
 </div>
 
     
@@ -71,7 +70,7 @@
         <br />
         <br />
         Credit Date&nbsp;&nbsp;
-        <asp:TextBox ID="tb_creditdate" runat="server" Width="223px"></asp:TextBox>
+        <asp:TextBox ID="tb_creditdate" runat="server" Width="223px" type="date"></asp:TextBox>
         <br />
         <br />
         Credit CVV&nbsp;&nbsp;
@@ -93,7 +92,7 @@
         <br />
         <br />
         Photo&nbsp;&nbsp;
-        <asp:TextBox ID="tb_photo" runat="server" Width="223px"></asp:TextBox>
+        <asp:TextBox ID="tb_photo" runat="server"  Width="223px"></asp:TextBox>
         <br />
         <br />
 
